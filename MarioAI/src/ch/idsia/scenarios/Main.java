@@ -43,9 +43,17 @@ public static void main(String[] args)
     int seed = 99;
     marioAIOptions.setLevelRandSeed(seed);
     
+    //難易度の設定
+    int d = 100;
+    marioAIOptions.setLevelDifficulty(d);
+    
+    //敵の有無
+    marioAIOptions.setEnemies("off");
+    
     final BasicTask basicTask = new BasicTask(marioAIOptions);
     basicTask.setOptionsAndReset(marioAIOptions);
     basicTask.doEpisodes(1,true,1);
+    
     System.exit(0);
 }
 
