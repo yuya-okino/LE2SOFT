@@ -54,19 +54,19 @@ public boolean[] getAction()
 
 //マリオのmマス先に下りがあるか
 private boolean existDown(int m){
-	if(getReceptiveFieldCellValue(marioEgoRow+m, marioEgoCol+1) ==  0){
+	if(getReceptiveFieldCellValue(marioEgoRow + m, marioEgoCol -1 ) ==  0){
 		return true;
 	}else{
 		return false;
 	}
 }
 
-//マリオのmマス先の下りの深さを図る (マリオとの相対位置)
+//マリオのmマス先の下りの深さを図る 
 private int getDepth(int m){
 	int  i=0;
 	int marioheight = marioEgoCol;
 	while(true){
-		if(getReceptiveFieldCellValue(marioEgoRow+m, marioEgoCol+i+1) == 0){
+		if(getReceptiveFieldCellValue(marioEgoRow + m, marioEgoCol-i-1) == 0){
 				break;
 		}
 		i++;
@@ -76,13 +76,6 @@ private int getDepth(int m){
 		return -1;
 	}else{
 		return i;
-	}
-}
-
-//穴の横幅(マリオとの相対位置)
-private int getWidth(int m){
-	if(getReceptiveFieldCellValue(marioEgoRow+m, marioEgoCol+1) == 0){
-		return
 	}
 }
 
