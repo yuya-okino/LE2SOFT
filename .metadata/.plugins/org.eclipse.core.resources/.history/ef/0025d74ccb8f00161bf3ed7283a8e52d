@@ -45,7 +45,7 @@ public boolean[] getAction()
     //ログに出力
     for(r=0; r<=18; r++){
     	for(c=0; c<=18; c++){
-    		System.out.printf("%5s",ground[r][c]);
+    		System.out.printf("%4d%n", ground[r][c]+",");
     	}
     	System.out.print('\n');
     }

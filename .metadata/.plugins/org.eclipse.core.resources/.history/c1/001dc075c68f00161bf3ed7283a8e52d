@@ -8,7 +8,7 @@ public class Task2Agent extends BasicMarioAIAgent implements Agent
 {
 int trueJumpCounter = 0;
 int trueSpeedCounter = 0;
-int[][] ground = new int[19][];
+int ground[][];
 boolean once = true; 
 
 public Task2Agent()
@@ -26,13 +26,8 @@ public void reset()
     trueJumpCounter = 0;
     trueSpeedCounter = 0;
     once = true;
-}
-
-//フレームごとの動き
-public boolean[] getAction()
-{   
-    int r, c;
-	//地形情報を格納する多次元配列を作る
+    int r=0, c=0;
+    //地形情報を格納する多次元配列を作る
     for(int i=0; i<=18; i++){
     	ground[i] = new int[19];
     }
@@ -41,17 +36,11 @@ public boolean[] getAction()
     		ground[r][c] = getReceptiveFieldCellValue(r, c);
     	}
     }
-    
-    //ログに出力
-    for(r=0; r<=18; r++){
-    	for(c=0; c<=18; c++){
-    		System.out.printf("%5s",ground[r][c]);
-    	}
-    	System.out.print('\n');
-    }
-    System.out.print("--------------------------------------------------"+"\n");
-    
-    
+}
+
+//フレームごとの動き
+public boolean[] getAction()
+{   
     return action;
 }
 

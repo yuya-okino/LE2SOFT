@@ -8,8 +8,6 @@ public class Task2Agent extends BasicMarioAIAgent implements Agent
 {
 int trueJumpCounter = 0;
 int trueSpeedCounter = 0;
-int[][] ground = new int[19][];
-boolean once = true; 
 
 public Task2Agent()
 {
@@ -19,38 +17,37 @@ public Task2Agent()
 
 //プログラム開始時
 public void reset()
-{		
+{
     action = new boolean[Environment.numberOfKeys];
     action[Mario.KEY_RIGHT] = true;
     action[Mario.KEY_SPEED] = true;
     trueJumpCounter = 0;
     trueSpeedCounter = 0;
-    once = true;
 }
 
 //フレームごとの動き
 public boolean[] getAction()
-{   
-    int r, c;
-	//地形情報を格納する多次元配列を作る
-    for(int i=0; i<=18; i++){
-    	ground[i] = new int[19];
+{
+    //穴があるとき
+    if (DangerOfAny() && getReceptiveFieldCellValue(marioEgoRow, marioEgoCol + 1) != 1)  // a coin
+    {
+        if (isMarioAbleToJump || (!isMarioOnGround && action[Mario.KEY_JUMP]))
+        {
+            action[Mario.KEY_JUMP] = true;
+        }
+        ++trueJumpCounter;
     }
-    for(r=0; r<=18; r++){
-    	for(c=0; c<=18; c++){
-    		ground[r][c] = getReceptiveFieldCellValue(r, c);
-    	}
+    else
+    {
+        action[Mario.KEY_JUMP] = false;
+        trueJumpCounter = 0;
     }
-    
-    //ログに出力
-    for(r=0; r<=18; r++){
-    	for(c=0; c<=18; c++){
-    		System.out.printf("%5s",ground[r][c]);
-    	}
-    	System.out.print('\n');
+
+    if (trueJumpCounter > 16)
+    {
+        trueJumpCounter = 0;
+        action[Mario.KEY_JUMP] = false;
     }
-    System.out.print("--------------------------------------------------"+"\n");
-    
     
     return action;
 }
@@ -82,20 +79,18 @@ private int getDepth(int m){
 	}
 }
 
-//床情報
-private void update() {
-}
-
-
-
-//穴が存在するか
-private boolean existHole(int m){
-	if(	getDepth(m)==-1){
-		return true;
-	}else{
-		return false;
+//穴の横幅(マリオとの相対位置)
+private int getHallWidth(int m){
+	int i=0;
+	while(true){
+		if(getReceptiveFieldCellValue(marioEgoRow+m+i+1, marioEgoCol+1) == 0){
+			break;
+		}
+		i++;
 	}
+	return i;
 }
+
 
 private boolean DangerOfAny()
 {

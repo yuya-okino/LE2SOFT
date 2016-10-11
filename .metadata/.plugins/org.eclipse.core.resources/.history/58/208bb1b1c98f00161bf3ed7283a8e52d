@@ -36,16 +36,16 @@ public boolean[] getAction()
     for(int i=0; i<=18; i++){
     	ground[i] = new int[19];
     }
-    for(r=0; r<=18; r++){
-    	for(c=0; c<=18; c++){
+    for(c=0; c<=18; c++){
+    	for(r=0; r<=18; r++){
     		ground[r][c] = getReceptiveFieldCellValue(r, c);
     	}
     }
     
     //ログに出力
-    for(r=0; r<=18; r++){
-    	for(c=0; c<=18; c++){
-    		System.out.printf("%5s",ground[r][c]);
+    for(c=18; c>=0; c--){
+    	for(r=18; r>=0; r--){
+    		System.out.print(ground[r][c]+" , ");
     	}
     	System.out.print('\n');
     }
