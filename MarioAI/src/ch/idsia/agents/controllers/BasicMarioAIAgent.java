@@ -67,8 +67,8 @@ protected int getKillsByShell;
 
 protected int receptiveFieldWidth;
 protected int receptiveFieldHeight;
-protected int marioEgoRow;
-protected int marioEgoCol;
+public int marioEgoRow;
+public int marioEgoCol;
 
 protected int distancePassedCells;
 protected int distancePassedPhys;

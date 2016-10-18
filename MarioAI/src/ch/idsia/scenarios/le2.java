@@ -13,7 +13,7 @@ public final class le2 {
 		marioAIOptions.setLevelRandSeed(seed);
     
 		//難易度の設定
-		int d = 1;
+		int d = 19;
 		marioAIOptions.setLevelDifficulty(d);
     
 		//敵の有無, マップ

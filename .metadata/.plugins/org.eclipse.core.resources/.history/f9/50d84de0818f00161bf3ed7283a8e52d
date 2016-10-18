@@ -1,0 +1,142 @@
+package ch.idsia.agents.controllers;
+
+import java.util.ArrayList;
+
+import ch.idsia.agents.Agent;
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
+import ch.idsia.benchmark.mario.environments.Environment;
+
+public class Task2Agent extends BasicMarioAIAgent implements Agent
+{
+int trueJumpCounter = 0;
+int trueSpeedCounter = 0;
+int[] ground = new int[19];
+
+public Task2Agent()
+{
+    super("Task2Agent");
+    reset();
+}
+
+//プログラム開始時
+public void reset()
+{
+	//groundの生成 
+	ground[9] = marioEgoRow;
+	int r_a = 18;
+	int c_a = 10;
+	int r_b = 18;
+	int c_b = 0;
+	while(c_a <= 18){
+		while(getReceptiveFieldCellValue(r_a, c_a) != 0){
+			r_a--;
+		}
+		ground[c_a] = r_a;
+		r_a= 18;
+	}
+	while(c_b <= 8){
+		while(getReceptiveFieldCellValue(r_b, c_b) != 0){
+			r_b--;
+		}
+		ground[c_b] = r_b;
+		r_b = 18;
+	}
+	for(int i = 0; i <= 18; i++){
+		System.out.print(ground[i]);
+		System.out.print(", ");
+	}
+	System.out.print('\n');
+	
+	
+	
+    action = new boolean[Environment.numberOfKeys];
+    action[Mario.KEY_RIGHT] = true;
+    action[Mario.KEY_SPEED] = true;
+    trueJumpCounter = 0;
+    trueSpeedCounter = 0;
+}
+
+//フレームごとの動き
+public boolean[] getAction()
+{
+    //穴があるとき
+	
+    if (DangerOfAny() && getReceptiveFieldCellValue(marioEgoRow, marioEgoCol + 1) != 1)  // a coin
+    {
+        if (isMarioAbleToJump || (!isMarioOnGround && action[Mario.KEY_JUMP]))
+        {
+            action[Mario.KEY_JUMP] = true;
+        }
+        ++trueJumpCounter;
+    }
+    else
+    {
+        action[Mario.KEY_JUMP] = false;
+        trueJumpCounter = 0;
+    }
+
+    if (trueJumpCounter > 16)
+    {
+        trueJumpCounter = 0;
+        action[Mario.KEY_JUMP] = false;
+    }
+    
+    return action;
+}
+
+//マリオのmマス先に下りがあるか
+private boolean existDown(int m){
+	if(getReceptiveFieldCellValue(marioEgoRow+m, marioEgoCol+1) ==  0){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+//マリオのmマス先の下りの深さを図る (マリオとの相対位置)
+private int getDepth(int m){
+	int  i=0;
+	int marioheight = marioEgoCol;
+	while(true){
+		if(getReceptiveFieldCellValue(marioEgoRow+m, marioEgoCol+i+1) == 0){
+				break;
+		}
+		i++;
+	}
+	//このときは穴
+	if(marioheight == i){
+		return -1;
+	}else{
+		return i;
+	}
+}
+
+//床情報
+private void update() {
+	
+}
+
+
+
+//穴が存在するか
+private boolean existHole(int m){
+	if(	getDepth(m)==-1){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+private boolean DangerOfAny()
+{
+        if ((getReceptiveFieldCellValue(marioEgoRow + 2, marioEgoCol + 1) == 0 &&
+            getReceptiveFieldCellValue(marioEgoRow + 1, marioEgoCol + 1) == 0) ||
+            getReceptiveFieldCellValue(marioEgoRow, marioEgoCol + 1) != 0 ||
+            getReceptiveFieldCellValue(marioEgoRow, marioEgoCol + 2) != 0 ||
+            getEnemiesCellValue(marioEgoRow, marioEgoCol + 1) != 0 ||
+            getEnemiesCellValue(marioEgoRow, marioEgoCol + 2) != 0)
+            return true;
+        else
+            return false;
+}
+}
