@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="ch.idsia.agents.controllers.Task2Agent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.controllers.Task3Agent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.controllers.ForwardAgent"/>
+</qualifiedTypeNameHistroy>

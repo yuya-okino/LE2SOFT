@@ -1,0 +1,208 @@
+package ch.idsia.agents.controllers;
+
+import ch.idsia.agents.Agent;
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
+import ch.idsia.benchmark.mario.environments.Environment;
+
+public class Task3Agent extends BasicMarioAIAgent implements Agent{
+
+//
+int trueJumpCounter5 = 0;
+int trueJumpCounter4 = 0;
+int trueJumpCounter3 = 0;
+int trueJumpCounter2 = 0;
+int trueJumpCounter1 = 0;
+boolean dash = false;
+
+	
+//ground[縦][横]
+int[][] ground = new int[19][19];
+
+public Task3Agent()
+{
+    super("Task3Agent"); 
+    reset();
+}
+
+public boolean[] getAction()
+{
+	int x = marioEgoRow;
+    int y = marioEgoCol;
+    
+	action[Mario.KEY_LEFT] = false;
+	action[Mario.KEY_RIGHT] = true;
+	action[Mario.KEY_JUMP] = false;
+	action[Mario.KEY_SPEED] = false;
+
+    
+	int r, c;
+	//地形情報を格納する多次元配列を作る
+    for(int i=0; i<=18; i++){
+    	ground[i] = new int[19];
+    }
+    for(r=0; r<=18; r++){
+    	for(c=0; c<=18; c++){
+    		ground[r][c] = getReceptiveFieldCellValue(r, c);
+    	}
+    }
+    
+    //ログに出力:enemiesに格納されている
+    for(r=0; r<=18; r++){
+    	for(c=0; c<=18; c++){
+    		System.out.printf("%5s",enemies[r][c]);
+    	}
+    	System.out.print('\n');
+    }
+    System.out.print("--------------------------------------------------"+"\n");
+    
+    //上に上がる段差がある時
+    if(ground[9][11]!=0 || ground[9][10]!=0 ){
+        action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+    }  
+    
+    //下に降りる段差がある時
+    if(ground[10][10] == 0 && !isHole(10) && !isHole(11) && !isHole(12) && !isHole(13) && !isHole(14)){
+        action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+    }  
+    
+    //穴がある時
+	if(isHole(10) || isHole(11)){
+        action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+	}
+	
+	//敵が近い時にジャンプして避ける
+	if( !dash && isMarioAbleToJump && (enemies[9][x+1] == 80 || enemies[9][x+2] == 80)){
+		avoidGoomba();
+	}
+	
+	//目の前に敵がいたら
+	if(marioMode == 2 &&
+			((!isMarioOnGround &&
+			 enemies[y+4][x+4] != 0 ||
+			 enemies[y+4][x+5] != 0 ||
+			 enemies[y+4][x+6] != 0 ||
+			 enemies[y+4][x+7] != 0 ||
+			 enemies[y+4][x+8] != 0 ||
+			 enemies[y+4][x+9] != 0 )||
+					(isMarioOnGround &&
+					 enemies[y][x+8] != 0 ||
+					 enemies[y][x+9] != 0)
+					)){
+		fireGoomba();
+	}
+	
+	//ジャンプを調整する
+	if(trueJumpCounter5 >= 1){
+        action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+        trueJumpCounter5++;
+        if(trueJumpCounter5 > 2){
+        	trueJumpCounter5 = 0;
+        }
+	}else if (trueJumpCounter4 >= 1){
+		action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+		action[Mario.KEY_RIGHT] = false;
+		action[Mario.KEY_LEFT] = true;
+        trueJumpCounter4++;
+        if(trueJumpCounter4 > 2){
+        	trueJumpCounter4 = 0;
+        }
+	}else if (trueJumpCounter3 >= 1){
+		action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+		action[Mario.KEY_RIGHT] = false;
+		action[Mario.KEY_LEFT] = true;
+        trueJumpCounter3++;
+        if(trueJumpCounter3 > 2){
+        	trueJumpCounter3 = 0;
+        }
+	}else if (trueJumpCounter2 >= 1){
+		action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+        	trueJumpCounter2 = 0;
+	}else if (trueJumpCounter1 >= 1){
+		action[Mario.KEY_JUMP] = isMarioAbleToJump || !isMarioOnGround;
+		action[Mario.KEY_RIGHT] = false;
+		action[Mario.KEY_LEFT] = true;
+        	trueJumpCounter1 = 0;
+	}
+	
+	dash = ( action[Mario.KEY_SPEED] == true);
+    return action;
+}
+
+//クリボーを倒すメソッド
+private void fireGoomba(){
+	action[Mario.KEY_SPEED] = true;
+}
+
+//地面にいる時の
+private void avoidGoomba() {
+	
+	//先頭のクリボーからのよりが5のクリボーは踏みつぶせる
+	if(enemies[9][marioEgoRow+6] == 80){
+		jump(5);
+		System.out.print('\n');
+		System.out.print("jump5");
+		System.out.print('\n');
+	} else if (enemies[9][marioEgoRow+5] == 80){
+		jump(4);
+		System.out.print('\n');
+		System.out.print("jump4");
+		System.out.print('\n');
+	} else if (enemies[9][marioEgoRow+4] == 80){
+		jump(3);
+		System.out.print('\n');
+		System.out.print("jump3");
+		System.out.print('\n');
+	} else if (enemies[9][marioEgoRow+3] == 80){
+		if(enemies[9][marioEgoRow+8] == 80){
+			jump(3);
+		}else{
+			jump(2);
+			System.out.print('\n');
+			System.out.print("jump2");
+			System.out.print('\n');
+		}
+	} else{
+		jump(1);
+		System.out.print('\n');
+		System.out.print("jump1");
+		System.out.print('\n');
+	}
+}
+
+public void reset()
+{
+    action = new boolean[Environment.numberOfKeys];
+    action[Mario.KEY_RIGHT] = true;
+    action[Mario.KEY_JUMP] = false;
+    trueJumpCounter5 = 0;
+    trueJumpCounter4 = 0;
+    trueJumpCounter3 = 0;
+    trueJumpCounter2 = 0;
+    trueJumpCounter1= 0;
+}
+
+public void jump(int i){
+	if(i == 5){
+		trueJumpCounter5 = 1;
+	}else if (i == 4){
+		trueJumpCounter4 = 1;
+	}else if (i == 3){
+		trueJumpCounter3 = 1;
+	}else if (i == 2){
+		trueJumpCounter2 = 1;
+	}else {
+		trueJumpCounter1 = 1;
+	}
+}
+
+
+public boolean isHole(int i){
+	boolean a = true;
+	for(int n = 0; n <= 18; n++){
+		a = a && (ground[n][i] == 0);
+	}
+	return a;
+}
+
+
+}
