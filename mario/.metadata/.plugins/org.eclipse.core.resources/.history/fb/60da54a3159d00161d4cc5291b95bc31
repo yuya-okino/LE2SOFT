@@ -1,0 +1,93 @@
+package ch.idsia.benchmark.tasks;
+import ch.idsia.agents.Agent;
+import ch.idsia.agents.LearningAgent;
+import ch.idsia.agents.LearningWithGA;
+import ch.idsia.tools.EvaluationInfo;
+import ch.idsia.tools.MarioAIOptions;
+
+//メインタスクで呼び出して学習させるためのクラス
+public class LearningTaskWithGA {
+	
+	LearningAgent learningAgent;
+	final static int numberOfTrials = 10;
+	final static int populationSize = 1000;
+	static Agent agent;
+	static MarioAIOptions marioAIOptions;
+	
+
+	public LearningTaskWithGA(LearningAgent learningAgent, MarioAIOptions marioAIOptions){
+		this.learningAgent = learningAgent;
+		LearningTaskWithGA.marioAIOptions = marioAIOptions;
+	}
+	
+	public static void main(String[] args){
+
+		/* 学習に用いるAgentを指定 */
+
+		/* MainTask4_1.java */
+		LearningAgent learningAgent = new LearningWithGA("-lde on -i on -ltb off -ld 2 -ls 0 -le g");
+		
+		/* MainTask4_2.java */
+		// LearningAgent learningAgent = new LearningWithGA("-lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
+		
+		/* MainTask4_3.java */
+		// LearningAgent learningAgent = new LearningWithGA("-lde on -i off -ld 30 -ls 133434 -lhb on");
+		
+		System.out.println("main.learningAgent = " + learningAgent);
+
+		/* パラメータを設定する */
+		MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+
+		//学習回数をセット
+	    learningAgent.setEvaluationQuota(numberOfTrials);
+	  
+	   	learningAgent.learn();
+	    
+
+	    agent = learningAgent.getBestAgent();
+	    //評価を見るかどうか
+	    //marioAIOptions.setVisualization(true);
+
+	    
+	    /* BasicTaskで1トラック実行 */
+	    BasicTask basicTask = new BasicTask(marioAIOptions);
+	    basicTask.setOptionsAndReset(marioAIOptions);
+	    
+	    /* 1トラック実行(制限時間を超えたらFalse)
+	     * 学習後のAgentを用いて，runSingleEpisodeメソッドで1回ステージを
+	     * プレイさせ，その結果をfという変数に入る
+	     */
+
+	    if (!basicTask.runSingleEpisode(1))  // make evaluation on the same episode once
+	    {
+	        System.out.println("MarioAI: out of computational time"
+	        		+ " per action! Agent disqualified!");
+	    }
+
+	    /* 結果を取得 */
+	    EvaluationInfo evaluationInfo = basicTask.getEvaluationInfo();
+	    //System.out.println(evaluationInfo.toString());
+
+
+	    /* DEBUG */
+	    int distance = evaluationInfo.distancePassedCells;
+	    System.out.println("distance : "+ distance);
+
+
+	    /*このステージの得点を取得 */
+	    int f = evaluationInfo.computeWeightedFitness();
+
+	    /* verbose = true なら結果，得点を出力 */
+	    
+	    System.out.println("Intermediate SCORE = " + f + ";\n Details: "
+	        		+ evaluationInfo.toString());
+	    
+
+	    System.out.println("finalScore = " + f);
+	}
+	
+	public Agent bestAgent(){
+		return agent;
+	}
+	
+}
