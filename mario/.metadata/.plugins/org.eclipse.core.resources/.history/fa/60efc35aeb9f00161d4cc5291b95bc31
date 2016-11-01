@@ -1,0 +1,123 @@
+package ch.idsia.benchmark.tasks;
+import ch.idsia.agents.Agent;
+import ch.idsia.agents.GAAgentTask4;
+import ch.idsia.agents.LearningAgent;
+import ch.idsia.agents.LearningWithGATask4;
+import ch.idsia.tools.EvaluationInfo;
+import ch.idsia.tools.MarioAIOptions;
+
+//メインタスクで呼び出して学習させるためのクラス
+public class LearningTaskWithGA {
+	
+	LearningAgent learningAgent;
+	//static Agent bestAgent;
+	static MarioAIOptions marioAIOptions;
+	
+
+	public LearningTaskWithGA(LearningAgent learningAgent, MarioAIOptions marioAIOptions){
+		this.learningAgent = learningAgent;
+		LearningTaskWithGA.marioAIOptions = marioAIOptions;
+	}
+	
+	public static void main(String[] args){
+
+		/* 学習に用いるAgentを指定 */
+
+		/* MainTask4_1.java */
+		LearningAgent learningAgent = new LearningWithGATask4("-lde on -i on -ltb off -ld 2 -ls 0 -le g");
+		
+		/* MainTask4_2.java */
+		// LearningAgent learningAgent = new LearningWithGA("-lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
+		
+		/* MainTask4_3.java */
+		// LearningAgent learningAgent = new LearningWithGA("-lde on -i off -ld 30 -ls 133434 -lhb on");
+		
+		System.out.println("main.learningAgent = " + learningAgent);
+
+		/* パラメータを設定する */
+		MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+
+		//float finalScore = evaluateSubmission(marioAIOptions, learningAgent);
+		
+		 /* LearningAgentの初期化 */
+	    learningAgent.init();
+
+	    //learnメソッドの中で繰り返し学習させる
+	   	learningAgent.learn();
+
+		/* 評価のvisualize */
+	    marioAIOptions.setVisualization(true);
+
+//	    System.out.println("/*---------------------- finished learning --------------------*/");
+//	    System.out.println("LearningTrack best agent = " + agent);
+
+	    Agent bestAgent = learningAgent.getBestAgent(); // this agent will be evaluated
+	    /* AgentをmarioAIOptionsのAgentにセット */
+	    marioAIOptions.setAgent(bestAgent);
+	    marioAIOptions.setArgs(args);
+
+	    /* BasicTaskで1トラック実行 */
+	    BasicTask basicTask = new BasicTask(marioAIOptions);
+	    basicTask.setOptionsAndReset(marioAIOptions);
+	    basicTask.doEpisodes(1,true,1);
+	    System.out.println("最後まで行ったよ");
+	    System.out.println("finalScore = " + finalScore);
+	    System.exit(0);
+	}
+	
+	private static int evaluateSubmission(MarioAIOptions marioAIOptions, LearningAgent learningAgent)
+	{
+		/* -----------------------学習--------------------------*/
+
+		/* LearningTaskオブジェクトを作成 */
+	    //LearningTask learningTask = new LearningTask(marioAIOptions);
+
+	    /* 作ったオブジェクトをLearningAgentのTaskとして渡す */
+	    //learningAgent.setLearningTask(learningTask);
+
+	    /* LearningAgentの初期化 */
+	    learningAgent.init();
+
+	    //learnメソッドの中で繰り返し学習させる
+	   	learningAgent.learn();
+	   
+
+
+	    /* １トラック終了後にスコアを画面に出力するか */
+	    boolean verbose = false;
+
+	    /* 1トラック実行(制限時間を超えたらFalse)
+	     * 学習後のAgentを用いて，runSingleEpisodeメソッドで1回ステージを
+	     * プレイさせ，その結果をfという変数に入れ，返す．
+	     */
+
+	    //if (!basicTask.runSingleEpisode(1))  // make evaluation on the same episode once
+	    //{
+	    //    System.out.println("MarioAI: out of computational time"
+	    //    		+ " per action! Agent disqualified!");
+	    //}
+
+	    /* 結果を取得 */
+	    EvaluationInfo evaluationInfo = basicTask.getEvaluationInfo();
+	    //System.out.println(evaluationInfo.toString());
+
+
+	    /* DEBUG */
+	    int distance = evaluationInfo.distancePassedCells;
+	    System.out.println("distance : "+ distance);
+
+
+	    /*このステージの得点を取得 */
+	    int f = evaluationInfo.computeWeightedFitness();
+
+	    /* verbose = true なら結果，得点を出力 */
+	    if (verbose){
+	        System.out.println("Intermediate SCORE = " + f + ";\n Details: "
+	        		+ evaluationInfo.toString());
+	    }
+
+	    /* Fitnessを返す */
+	    return f;
+	}
+	
+}
