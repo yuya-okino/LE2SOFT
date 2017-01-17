@@ -1,0 +1,5 @@
+package ch.idsia.benchmark.tasks;
+
+public class LearningTaskWithGA2 {
+
+}

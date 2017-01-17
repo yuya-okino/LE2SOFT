@@ -2,5 +2,15 @@
 <qualifiedTypeNameHistroy>
 <fullyQualifiedTypeName name="ch.idsia.agents.controllers.Task2Agent"/>
 <fullyQualifiedTypeName name="ch.idsia.agents.controllers.ForwardAgent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.LearningAgent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.GAAgent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.Agent"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.controllers.DemoGA"/>
+<fullyQualifiedTypeName name="ch.idsia.benchmark.tasks.LearningTaskWithGA"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.LearningWithGA"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.LearningWithGATask4"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.GAAgentTask4"/>
+<fullyQualifiedTypeName name="ch.idsia.benchmark.mario.engine.sprites.Mario"/>
+<fullyQualifiedTypeName name="ch.idsia.agents.LearningWithGATask4_2"/>
 <fullyQualifiedTypeName name="ch.idsia.agents.controllers.Task3Agent"/>
 </qualifiedTypeNameHistroy>
