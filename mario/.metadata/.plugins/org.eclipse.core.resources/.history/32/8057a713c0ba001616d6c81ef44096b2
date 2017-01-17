@@ -1,0 +1,518 @@
+package ch.idsia.agents;
+
+import java.util.Random;
+
+import ch.idsia.agents.controllers.BasicMarioAIAgent;
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
+import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.evolution.Evolvable;
+
+
+/*
+ * シフト演算子 x << y
+ * xをyビットだけ左シフトする。空いた下位ビット(右側)には0を挿入。
+ */
+public class GAAgentTask4 extends BasicMarioAIAgent
+implements Agent,Evolvable,Comparable,Cloneable{
+	
+	static String name = "GAAgentTask4";
+	
+	public boolean aaaaaa = false;
+	public boolean bbbbbb = false;
+	public boolean cccccc = false;
+
+	private boolean wallMode = false;
+	private int wallPosition = 100000;
+
+	public int leftTime = 0;
+	public boolean lastOnBlickHigh = false; 
+	public boolean lastOnAir = true;
+	public int count=0;
+	public float lastX=0;
+	public int maxDistance=0;
+	public float stuckedPlaceX; 
+	public float stuckedPlaceY;
+	public float distanceFromStuckedPlace=0;
+	public boolean flag1;
+	public boolean flag2;
+	public boolean flag3;
+	public boolean flag4;
+
+	
+	public int[] input;
+	
+	/*高さの蓄積*/
+	public int heightAcc = 0;
+	
+	/* 遺伝子情報 */
+	//public byte[] gene;
+	public int[] gene;
+
+
+	/* 各個体の評価値保存用変数 */
+	private
+	int fitness = 0;
+
+	/* 環境から取得する入力数 */
+	public int inputNum = 54;
+	
+
+	
+	/* 乱数用変数 r */
+	Random r = new Random();
+
+	/* コンストラクタ */
+	
+	public GAAgentTask4(){
+
+		super(name);
+
+		/* 16ビットの入力なので，65536(=2^16)個用意する */
+		//2^27?
+		
+		//gene = new byte[(1 << inputNum)];
+		gene = new int[inputNum * 12];
+
+
+		/* 出力は32(=2^5)パターン */
+		int num = 1 << (Environment.numberOfKeys -1);
+
+		aaaaaa = false;
+		bbbbbb = false;
+		cccccc = false;
+		maxDistance = 0;
+		int random;
+		int flag = 1;
+		distanceFromStuckedPlace=0;
+		
+		//geneの初期値
+		for(int i=0; i<gene.length; i++){
+			if(r.nextBoolean()){
+				gene[i] = r.nextInt(100);
+			}else {
+				gene[i] = -r.nextInt(100);
+			}
+		}
+
+		/* geneの初期値は乱数(0から31)で取得 */
+//		for(int i=0; i<gene.length; i++){
+//			if(flag == 1){
+//			switch(random = r.nextInt(8)){
+//				case 0:
+//					gene[i] = 0; 
+//					break;
+//				case 1:
+//					gene[i] = 2; 
+//					break;
+//				case 2:
+//					gene[i] = 8; 
+//					break;
+//				case 3:
+//					gene[i] = 10; 
+//					break;
+//				case 4:
+//					gene[i] = 16; 
+//					break;
+//				case 5:
+//					gene[i] = 18;
+//					break;
+//				case 6:
+//					gene[i] = 24; 
+//					break;
+//				case 7:
+//					gene[i] = 26; 
+//					break;
+//			}
+//			}else{
+//				gene[i]=(byte)r.nextInt(num);
+//			}
+//			gene[i] = (byte)r.nextInt(17);
+//		}
+		
+		/* 評価値を0で初期化 */
+		fitness = 0;
+
+
+	}
+
+	/* compfit()追加記述 */
+
+	int distance;
+
+	public void setFitness(int fitness){
+		this.fitness = fitness;
+	}
+
+	public int getFitness(){
+		return fitness;
+	}
+
+	/* 降順にソート */
+	public int compareTo(Object obj){
+	   	GAAgentTask4 otherUser = (GAAgentTask4) obj;
+    	return -(this.fitness - otherUser.getFitness());
+	}
+
+	/* compFit()追加記述ここまで */
+	
+	public void reset()
+	{
+		aaaaaa = false;
+		bbbbbb = false;
+		cccccc = false;
+		maxDistance = 0;
+		
+		flag1 = false;
+		flag2 = false;
+		flag3 = false;
+		flag4 = false;
+
+		wallMode = false;
+		wallPosition = 100000;
+
+		leftTime = 0;
+		lastOnBlickHigh = false; 
+	    lastOnAir = true;
+		count=0;
+	    lastX=0;
+		stuckedPlaceX=0; 
+		stuckedPlaceY=0;
+		distanceFromStuckedPlace=0;
+		
+		/*高さの蓄積*/
+		heightAcc = 0;
+		
+		fitness = 0;	
+	}
+
+
+	public boolean[] getAction(){
+		
+		//System.out.print(this.distanceFromStuckedPlace);
+		//System.out.print("\n");
+
+		//aaaaaaの判定
+		isWall();
+		
+		//bbbbbbの判定
+	
+			if(distancePassedCells >= 25){
+				setHeightAcc(getHeightAcc() + (int)((250-(int)marioFloatPos[1]) * (marioMode)));
+			}
+			//this.distanceFromStuckedPlace = (float) Math.max( Math.sqrt(3*(marioFloatPos[0] - stuckedPlaceX) * (marioFloatPos[0] - stuckedPlaceX) + 7*(marioFloatPos[1]) * (marioFloatPos[1])), this.distanceFromStuckedPlace );
+			
+			//bbbbbb = ((distancePassedCells != 131 && distancePassedCells != 130) || bbbbbb);
+			//if(bbbbbb){
+				//System.out.print("壁を見つけ離れた");
+				//System.out.print("\n");
+			
+
+			
+			if(distance > wallPosition){
+				wallMode = false;
+				wallPosition = 100000;
+				cccccc = true;
+			}
+		
+		
+		//int input = 0;
+		input = new int[inputNum];
+		
+		//System.out.println(250-(int)marioFloatPos[1]);
+		leftTime = timeLeft;
+		
+		/* 環境情報から input を決定
+		 * 上位ビットから周辺近傍の状態を格納していく
+		 */
+		//
+		//input += probe(2 , 0,levelScene) * (1 << 17);
+		
+		//input += probe(3 , 0 ,enemies) * (1 << 16);
+		//input += probe(0, -3,levelScene) * (1 << 15);
+
+		
+		/* enemies情報(上位9桁) */
+		//input += probe(0 , 4,enemies) * (1 << 18);
+		//input += probe(3,-3,levelScene) * (1 << 15);
+		//System.out.println((wallMode? 1: 0));
+		////////////////////input += (cccccc ? 1: 0) * (1 << 15);
+		//input += (bbbbbb ? 1: 0) * (1 << 14);
+		////////////////////input += (aaaaaa ? 1: 0) * (1 << 14);
+		//input += probe(1 ,-1,enemies) * (1 << 14);
+		
+		////////////////////input += probe(1 ,1,enemies) * (1 << 13);
+		////////////////////input += probe(1 ,0 ,enemies) * (1 << 12);
+		////////////////////input += probe(1 ,1 ,enemies) * (1 <<  11);
+		
+
+		/* levelScene情報(上位9桁) */
+		//
+//		input += probe(-2, 0,levelScene) * (1 << 10);
+		//input += probe( 2, 0,levelScene) * (1 << 10);
+		//input += probe(-2,1,levelScene) * (1 << 10);
+		//input += probe(0,-1,enemies) * (1 << 10);
+		////////////////////input += probe(2, 0, enemies) * (1 << 10);
+
+////////////////////input += (marioMode == 2 ? 1:0) * (1 << 9);
+
+////////////////////input += probe(-1,-1,levelScene) * (1 << 8);
+////////////////////	input += probe(0 ,-1,levelScene) * (1 << 7);
+////////////////////	input += probe(1 ,-1,levelScene) * (1 << 6);
+////////////////////	input += probe(-1,0 ,levelScene) * (1 << 5);
+////////////////////	input += probe(1 ,0 ,levelScene) * (1 << 4);
+////////////////////input += probe(-1,1 ,levelScene) * (1 << 3);
+////////////////////input += (int)(probe(1 ,1 ,levelScene) * (1 << 2));
+
+////////////////////input += (isMarioOnGround ? 1: 0) * (1 << 1);
+////////////////////input += (isMarioAbleToJump ? 1: 0) * (1 << 0);		
+		
+		//input
+		input[0] = (isMarioAbleToJump) ? 1: -1;
+		input[1] = (isMarioOnGround) ? 1: -1;
+	    //input[2] = (marioMode == 2) ? 1: -1;
+		input[3] = probe(1 ,1 ,levelScene);
+		input[4] = probe(1 ,0 ,levelScene);
+		input[5] = probe(1 ,-1 ,levelScene);
+		input[6] = probe(0 ,-1 ,levelScene);
+		input[7] = probe(-1 ,-1 ,levelScene);
+		input[8] = probe(-1 ,0 ,levelScene);
+		input[9] = probe(-1 ,1 ,levelScene);
+		input[10] = probe(-2 ,0 ,levelScene);
+		input[11] = probe(2 ,0 ,levelScene);
+		input[12] = probe(-2 ,1 ,levelScene);
+		input[13] = probe(2 ,1 ,levelScene);
+		input[14] = probe(2 ,-1 ,levelScene);
+		input[15] = probe(-2 ,-1 ,levelScene);
+		input[42] = probe(0 ,1 ,levelScene);
+		input[43] = probe(0 ,2 ,levelScene);
+		input[44] = probe(-2 ,2 ,levelScene);
+		input[45] = probe(-1 ,2 ,levelScene);
+		input[46] = probe(0 ,2 ,levelScene);
+		input[47] = probe(1 ,2 ,levelScene);
+		input[48] = probe(2 ,2 ,levelScene);
+		input[49] = probe(-2 ,-2 ,levelScene);
+		input[50] = probe(-1 ,-2 ,levelScene);
+		input[51] = probe(0 ,-2 ,levelScene);
+		input[52] = probe(1 ,-2 ,levelScene);
+		input[53] = probe(2 ,-2 ,levelScene);
+
+
+		input[16] = probe(3 ,-1 ,enemies);
+		input[17] = probe(3 ,0 ,enemies);
+		input[18] = probe(3 ,1 ,enemies);
+		input[19] = probe(3 ,2 ,enemies);
+		input[20] = probe(-1 ,2 ,enemies);
+		input[21] = probe(-1 ,0 ,enemies);
+		input[22] = probe(-1 ,1 ,enemies);
+		input[23] = probe(-1 ,-1 ,enemies);
+		input[24] = probe(0 ,-1 ,enemies);
+		input[25] = probe(0 ,1 ,enemies);
+		input[26] = probe(1 ,1 ,enemies);
+		input[27] = probe(1 ,-1 ,enemies);
+		input[28] = probe(1 ,0 ,enemies);
+		input[29] = probe(0 ,2 ,enemies);
+		input[30] = probe(1 ,2 ,enemies);
+		input[31] = probe(2 ,-1 ,enemies);
+		input[32] = probe(2 ,0 ,enemies);
+		input[33] = probe(2 ,1 ,enemies);
+		input[2] = probe(2 ,2 ,enemies);
+		input[34] = probe(3 ,-2 ,enemies);
+		input[35] = probe(4 ,3 ,enemies);
+		input[36] = probe(4 ,2 ,enemies);
+		input[37] = probe(4 ,1 ,enemies);
+		input[38] = probe(4 ,0 ,enemies);
+		input[39] = probe(4 ,-1 ,enemies);
+		input[40] = probe(4 ,-2 ,enemies);
+		input[41] = probe(4 ,-3 ,enemies);
+		
+
+		
+		/* input から output(act)を決定する */
+		
+		
+		//int act = gene[input];	//遺伝子のinput番目の数値を読み取る
+		//変える
+//		for(int i=0; i<Environment.numberOfKeys; i++){
+//			action[i] = (act %2 == 1);	//2で割り切れるならtrue
+//			act /= 2;
+//		}
+		
+		//output(wallModeじゃないとき)
+		if(!wallMode){
+			action[0] = (getAction(0) >= 0);
+			action[1] = (getAction(1) >= 0);
+			action[2] = (getAction(2) >= 0);
+			action[3] = (getAction(3) >= 0);
+			action[4] = (getAction(4) >= 0);
+			action[5] = (getAction(5) >= 0);
+		} else {
+			action[0] = (getAction(6) >= 0);
+			action[1] = (getAction(7) >= 0);
+			action[2] = (getAction(8) >= 0);
+			action[3] = (getAction(9) >= 0);
+			action[4] = (getAction(10) >= 0);
+			action[5] = (getAction(11) >= 0);
+		}
+		
+		count();
+		maxDistance = Math.max(maxDistance, distancePassedCells);
+		//System.out.println(250-(int)marioFloatPos[1]);
+		//(125, 132~135)
+		if(wallMode && distancePassedCells == 125 && (250-(int)marioFloatPos[1] <= 136 && 132<= 250-(int)marioFloatPos[1] )){
+			flag1 = true;
+		}
+		
+		if(wallMode && distancePassedCells == 123 && (250-(int)marioFloatPos[1] <= 136 && 132<= 250-(int)marioFloatPos[1] )){
+			flag2 = true;
+		}
+		
+		if(wallMode && distancePassedCells <= 120 && (132+60<= 250-(int)marioFloatPos[1] )){
+			flag3 = true;
+		}
+		
+		if(wallMode && distancePassedCells == 128 && (250-(int)marioFloatPos[1] >= 80 && 90>= 250-(int)marioFloatPos[1] )){
+			flag4 = true;
+			System.out.println(flag4);
+		}
+		
+		return action;
+	}
+
+	public int getAction(int i){
+		int action = 0;
+		for(int n =0; n<inputNum; n++){
+			if(3<=n && n<=9 ){
+				action += gene[inputNum*i + n] * input[n] ;
+			}else if (21<=n && n<=28){
+				action += gene[inputNum*i + n] * input[n] ;
+			}else{
+				action += gene[inputNum*i + n] * input[n] ;
+			}
+		}
+		return action;
+	}
+	
+	
+	
+	
+	
+	
+	/*マリオの相対位置(x, y)
+	 * (-1, -1) ( 0, -1) ( 1, -1)
+	 * 
+	 * (-1,  0)   マリオ  ( 1,  0)
+	 * 
+	 * (-1,  1) ( 0,  1) ( 1,  1)
+	 * 
+	 * を渡してやると、絶対位置の情報を返す
+	 * 
+	 * (x, y)の位置が0でなければ１を返す
+	 */
+
+
+	private int probe(int x, int y, byte[][] scene){
+	    int realX = x + 11;
+	    int realY = y + 11;
+	    return (scene[realX][realY] != 0) ? 1 : -1;
+	}
+
+//	public byte getGene(int i){
+//		return gene[i];
+//	}
+	public int getGene(int i){
+		return gene[i];
+	}
+
+	public void setGene(int j,int gene){
+		this.gene[j] = gene;
+	}
+
+	public void setDistance(int distance){
+		if(marioMode == 2){
+		  this.distance = distance;
+		}
+	}
+	public int getDistance(){
+		return distance;
+	}
+
+
+	@Override
+	public Evolvable getNewInstance() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	@Override
+	public GAAgentTask4 clone(){
+
+		GAAgentTask4 res = null;
+		try{
+			res = (GAAgentTask4)super.clone();
+		}catch(CloneNotSupportedException e){
+			throw new InternalError(e.toString());
+		}
+
+		return res;
+	}
+
+	@Override
+	public void mutate() {
+		// TODO 自動生成されたメソッド・スタブ
+	}
+
+	@Override
+	public Evolvable copy() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+	
+	public int getHeightAcc(){
+		return heightAcc;
+	}
+	
+	public void setHeightAcc(int heightAcc){
+		this.heightAcc = heightAcc;
+	}
+	
+	public boolean onBlickHigh(){
+		if((250-(int)marioFloatPos[1]) > 30 && getReceptiveFieldCellValue(marioEgoRow + 1, marioEgoCol + 0) != 0 && (getReceptiveFieldCellValue(marioEgoRow + 2, marioEgoCol + 0) == 0 )){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	
+	//壁を見つけたのちの特典
+	public void count(){
+		if( aaaaaa && this.lastX != marioFloatPos[0] && this.onBlickHigh() && this.lastOnAir && isMarioOnGround){
+			this.count += (int)((250-(int)marioFloatPos[1]) * (250-(int)marioFloatPos[1]) );
+		}
+		this.lastOnBlickHigh = this.onBlickHigh();
+		this.lastOnAir = !isMarioOnGround;
+		this.lastX = marioFloatPos[0];
+	}
+	
+	public void isWall(){
+		
+		if(!wallMode){
+		
+			boolean a = true;
+			for(int n = 5; n <= 12; n++){
+				a = a && (getReceptiveFieldCellValue(n, 10) != 0) && distance>100;
+			}
+
+			if(a){
+				wallMode = a;
+				wallPosition = distance + 4;
+				//wallModeになった時点で得点追加
+				aaaaaa = true;
+				this.stuckedPlaceX = marioFloatPos[0];
+				this.stuckedPlaceY = marioFloatPos[1];
+				//System.out.println("壁を見つけた");
+				//System.out.print("\n");
+			}
+		}
+	}
+}

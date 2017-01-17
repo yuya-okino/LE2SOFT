@@ -2,5 +2,8 @@
 <workingSetManager>
 <workingSet editPageId="org.eclipse.ui.resourceWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1475562666496_1" label="MarioAI" name="MarioAI"/>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1475562605139_0" label="Window Working Set" name="Aggregate for window 1475562605139"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1480927641654_4" label="Window Working Set" name="Aggregate for window 1480927641654"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1480932017128_6" label="Window Working Set" name="Aggregate for window 1480932017128"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1480942239020_8" label="Window Working Set" name="Aggregate for window 1480942239020"/>
 <mruList name="MarioAI"/>
 </workingSetManager>

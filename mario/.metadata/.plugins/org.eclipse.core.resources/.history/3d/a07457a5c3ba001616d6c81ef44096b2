@@ -1,0 +1,74 @@
+package ch.idsia.benchmark.tasks;
+import ch.idsia.agents.Agent;
+import ch.idsia.agents.GAAgentTask4_3;
+import ch.idsia.agents.LearningAgent;
+import ch.idsia.agents.LearningWithGATask4;
+import ch.idsia.tools.EvaluationInfo;
+import ch.idsia.tools.MarioAIOptions;
+
+//メインタスクで呼び出して学習させるためのクラス
+public class LearningTaskWithGA {
+	
+	LearningAgent learningAgent;
+	//static Agent bestAgent;
+	static MarioAIOptions marioAIOptions;
+	
+
+	public LearningTaskWithGA(LearningAgent learningAgent, MarioAIOptions marioAIOptions){
+		this.learningAgent = learningAgent;
+		LearningTaskWithGA.marioAIOptions = marioAIOptions;
+	}
+	
+	public static void main(String[] args){
+
+		/* 学習に用いるAgentを指定 */
+
+		/* MainTask4_1.java */
+		//LearningAgent learningAgent = new LearningWithGATask4("-lde on -i off -ltb off -ld 2 -ls 0 -le g");
+		
+		/* MainTask4_2.java */
+		 //LearningAgent learningAgent = new LearningWithGATask4("-i off -lco off -lb on -le off -lhb off -lg on -ltb on -lhs off -lca on -lde on -ld 5 -ls 133829");
+		
+		/* MainTask4_3.java */
+		 LearningAgent learningAgent = new LearningWithGATask4("-i off -lde on -i off -ld 30 -ls 133434 -lhb on");
+		
+		System.out.println("main.learningAgent = " + learningAgent);
+
+		/* パラメータを設定する */
+		MarioAIOptions marioAIOptions = new MarioAIOptions(args);	
+		 /* LearningAgentの初期化 */
+	    learningAgent.init();
+	    //learnメソッドの中で繰り返し学習させる
+	   	learningAgent.learn();
+		/* 評価のvisualize */
+	    marioAIOptions.setVisualization(true);
+
+	    System.out.println("/*---------------------- finished learning --------------------*/");
+
+	    Agent bestAgent = learningAgent.getBestAgent(); // this agent will be evaluated
+	    /* AgentをmarioAIOptionsのAgentにセット */
+	    int seed = 0;
+	    marioAIOptions.setLevelRandSeed(seed);
+	    
+	    int d = 2;
+	    marioAIOptions.setLevelDifficulty(d);
+	    
+	    marioAIOptions.setEnemies("g");
+	    marioAIOptions.setAgent(bestAgent);
+	    marioAIOptions.setDeadEndsCount(true);
+	    marioAIOptions.setCannonsCount(true);
+	    marioAIOptions.setHillStraightCount(true);
+	    marioAIOptions.setTubesCount(false);
+	    marioAIOptions.setGapsCount(true);
+	    marioAIOptions.setHiddenBlocksCount(false);
+	    marioAIOptions.setBlocksCount(true);
+	    marioAIOptions.setCoinsCount(true);
+	    marioAIOptions.setFlatLevel(false);
+	    
+	    final BasicTask basicTask = new BasicTask(marioAIOptions);
+	    System.out.println("最後の試行");
+	    basicTask.setOptionsAndReset(marioAIOptions);
+	    basicTask.doEpisodes(1,true,1);
+	    System.exit(0);
+	}	
+}

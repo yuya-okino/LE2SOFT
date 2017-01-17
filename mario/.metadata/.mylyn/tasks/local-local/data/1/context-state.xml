@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContextState>
+<org.eclipse.mylyn.context.ui.editors>
+<MonitoredWindowOpenEditors class="org.eclipse.ui.internal.WorkbenchWindow" isActive="true" isLaunching="true" number="0">
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="LearningWithGATask4.java" partName="LearningWithGATask4.java" title="LearningWithGATask4.java" tooltip="mario/src/ch/idsia/agents/LearningWithGATask4.java">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/mario/src/ch/idsia/agents/LearningWithGATask4.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="821" selectionTopPixel="743"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="GAAgentTask4.java" partName="GAAgentTask4.java" title="GAAgentTask4.java" tooltip="mario/src/ch/idsia/agents/GAAgentTask4.java">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/mario/src/ch/idsia/agents/GAAgentTask4.java"/>
+<editorState selectionHorizontalPixel="101" selectionLength="0" selectionOffset="7448" selectionTopPixel="3194"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="Easy.java" partName="Easy.java" title="Easy.java" tooltip="mario/src/ch/idsia/utils/wox/serial/Easy.java">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/mario/src/ch/idsia/utils/wox/serial/Easy.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2240" selectionTopPixel="320"/>
+</editor>
+<editor id="org.eclipse.jdt.ui.CompilationUnitEditor" name="PlayLearnedTrack.java" partName="PlayLearnedTrack.java" title="PlayLearnedTrack.java" tooltip="mario/src/ch/idsia/scenarios/PlayLearnedTrack.java">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/mario/src/ch/idsia/scenarios/PlayLearnedTrack.java"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="539" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.mylyn.tasks.ui.editors.task" name="New Task" partName="New Task" title="New Task" tooltip="New Task">
+<input factoryID="org.eclipse.mylyn.tasks.ui.elementFactories.task.editor" taskHandle="local-1"/>
+</editor>
+</MonitoredWindowOpenEditors>
+</org.eclipse.mylyn.context.ui.editors>
+</ContextState>
